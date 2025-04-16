@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <title>ExpressCar API - Interface</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    form input, form textarea, form button {
+      display: block;
+      margin: 5px 0;
+      padding: 8px;
+      width: 300px;
+    }
+    form textarea {
+      height: 80px;
+    }
+    .result-list ul {
+      list-style: none;
+      padding: 0;
+    }
+    .result-list li {
+      margin: 5px 0;
+      padding: 5px;
+      border-bottom: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+  <h1>ExpressCar API - Interface</h1>
+  
+  <h2>Cadastrar Cliente</h2>
+  <form id="clienteForm">
+    <input type="text" id="nif" placeholder="NIF" required>
+    <input type="text" id="nomeAbreviado" placeholder="Nome Abreviado" required>
+    <input type="text" id="nome" placeholder="Nome Completo" required>
+    <input type="text" id="morada" placeholder="Morada" required>
+    <input type="text" id="codigoPostal" placeholder="Código Postal" required>
+    <input type="text" id="localidade" placeholder="Localidade" required>
+    <input type="text" id="contactos" placeholder="Contactos (Ex.: [{\"tipo\": \"pessoal\", \"numero\": \"912345678\"}])" required>
+    <input type="email" id="email" placeholder="Email" required>
+    <textarea id="observacoes" placeholder="Observações"></textarea>
+    <button type="submit">Cadastrar Cliente</button>
+  </form>
+  
+  <h2>Lista de Clientes</h2>
+  <button id="listarClientes">Listar Clientes</button>
+  <div id="lista" class="result-list"></div>
+
+  <script>
+    // Função para cadastrar cliente (POST)
+    const form = document.getElementById('clienteForm');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const cliente = {
+        nif: document.getElementById('nif').value,
+        nome_abreviado: document.getElementById('nomeAbreviado').value,
+        nome: document.getElementById('nome').value,
+        morada: document.getElementById('morada').value,
+        codigo_postal: document.getElementById('codigoPostal').value,
+        localidade: document.getElementById('localidade').value,
+        contactos: document.getElementById('contactos').value,
+        email: document.getElementById('email').value,
+        observacoes: document.getElementById('observacoes').value
+      };
+
+      try {
+        const response = await fetch('http://localhost:3000/clientes', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(cliente)
+        });
+        if (!response.ok) {
+          throw new Error('Erro ao cadastrar cliente');
+        }
+        const data = await response.json();
+        alert("Cliente cadastrado com sucesso:\n" + JSON.stringify(data, null, 2));
+        form.reset();
+      } catch (error) {
+        alert("Erro: " + error.message);
+      }
+    });
+
+    // Função para listar clientes (GET)
+    document.getElementById('listarClientes').addEventListener('click', async () => {
+      try {
+        const response = await fetch('http://localhost:3000/clientes');
+        if (!response.ok) {
+          throw new Error('Erro ao listar clientes');
+        }
+        const clientes = await response.json();
+        let html = '<ul>';
+        clientes.forEach(cliente => {
+          html += `<li>ID: ${cliente.id_cliente} - Nome: ${cliente.nome}</li>`;
+        });
+        html += '</ul>';
+        document.getElementById('lista').innerHTML = html;
+      } catch (error) {
+        document.getElementById('lista').innerHTML = "Erro: " + error.message;
+      }
+    });
+  </script>
+</body>
+</html>

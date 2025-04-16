@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <title>ExpressCar Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      height: 100vh;
+    }
+    /* Menu lateral */
+    .sidebar {
+      background-color: #333;
+      color: white;
+      width: 200px;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    .sidebar h2 {
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
+    .sidebar button {
+      background-color: #444;
+      color: white;
+      border: none;
+      padding: 10px;
+      width: 100%;
+      margin-bottom: 10px;
+      cursor: pointer;
+      text-align: left;
+    }
+    .sidebar button:hover {
+      background-color: #555;
+    }
+    /* Área de conteúdo */
+    .content {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .section {
+      display: none;
+    }
+    .section.active {
+      display: block;
+    }
+    /* Estilos simples para formulários */
+    form input, form textarea, form button {
+      display: block;
+      margin: 5px 0;
+      padding: 8px;
+      width: 300px;
+    }
+    form textarea {
+      height: 60px;
+    }
+    .result-list ul {
+      list-style: none;
+      padding: 0;
+    }
+    .result-list li {
+      margin: 5px 0;
+      padding: 5px;
+      border-bottom: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+  <!-- Menu lateral -->
+  <div class="sidebar">
+    <h2>Menu</h2>
+    <button onclick="showSection('clientes')">Clientes</button>
+    <button onclick="showSection('veiculos')">Veículos</button>
+    <button onclick="showSection('ordens')">Ordens de Reparação</button>
+    <button onclick="showSection('itens')">Itens de OR</button>
+    <button onclick="showSection('marcacoes')">Marcações</button>
+    <button onclick="showSection('fornecedores')">Fornecedores</button>
+    <button onclick="showSection('contas')">Contas Correntes</button>
+    <button onclick="showSection('compras')">Compras</button>
+    <button onclick="showSection('comprasArtigos')">Compras de Artigos</button>
+    <button onclick="showSection('anexos')">Anexos de OR</button>
+    <button onclick="showSection('logs')">Log de Ações</button>
+  </div>
+
+  <!-- Área de conteúdo -->
+  <div class="content">
+    <!-- Seção de Clientes -->
+    <div id="clientes" class="section active">
+      <h1>Clientes</h1>
+      <h2>Cadastrar Cliente</h2>
+      <form id="clienteForm">
+        <input type="text" id="nif" placeholder="NIF" required>
+        <input type="text" id="nomeAbreviado" placeholder="Nome Abreviado" required>
+        <input type="text" id="nome" placeholder="Nome Completo" required>
+        <input type="text" id="morada" placeholder="Morada" required>
+        <input type="text" id="codigoPostal" placeholder="Código Postal" required>
+        <input type="text" id="localidade" placeholder="Localidade" required>
+        <input type="text" id="contactos" placeholder='Contactos (Ex.: [{"tipo": "pessoal", "numero": "912345678"}])' required>
+        <input type="email" id="email" placeholder="Email" required>
+        <textarea id="observacoes" placeholder="Observações"></textarea>
+        <button type="submit">Cadastrar Cliente</button>
+      </form>
+      <button id="listarClientes">Listar Clientes</button>
+      <div id="listaClientes" class="result-list"></div>
+    </div>
+
+    <!-- Seção de Veículos -->
+    <div id="veiculos" class="section">
+      <h1>Veículos</h1>
+      <h2>Cadastrar Veículo</h2>
+      <form id="veiculoForm">
+        <input type="number" id="id_cliente_veiculo" placeholder="ID do Cliente" required>
+        <input type="text" id="matricula" placeholder="Matrícula" required>
+        <input type="text" id="marca" placeholder="Marca" required>
+        <input type="text" id="modelo" placeholder="Modelo" required>
+        <input type="number" id="cc" placeholder="CC" required>
+        <input type="number" id="kw" placeholder="KW" required>
+        <input type="number" id="cv" placeholder="CV" required>
+        <input type="text" id="combustivel" placeholder="Combustível" required>
+        <input type="text" id="numero_motor" placeholder="Número do Motor" required>
+        <input type="text" id="tecdoc" placeholder="Tecdoc" required>
+        <input type="text" id="vin" placeholder="VIN" required>
+        <input type="date" id="data_primeira_matricula" placeholder="Data da Primeira Matrícula" required>
+        <input type="number" id="rev_km" placeholder="KM para Revisão" required>
+        <input type="number" id="rev_dias" placeholder="Dias para Revisão" required>
+        <button type="submit">Cadastrar Veículo</button>
+      </form>
+      <button id="listarVeiculos">Listar Veículos</button>
+      <div id="listaVeiculos" class="result-list"></div>
+    </div>
+
+    <!-- Seção de Ordens de Reparação -->
+    <div id="ordens" class="section">
+      <h1>Ordens de Reparação</h1>
+      <h2>Criar Ordem de Reparação</h2>
+      <form id="ordemForm">
+        <input type="number" id="id_veiculo_ordem" placeholder="ID do Veículo" required>
+        <input type="number" id="id_funcionario_criador" placeholder="ID do Funcionário Criador" required>
+        <input type="number" id="km_registado" placeholder="KM Registrado" required>
+        <input type="text" id="descricao_intervencao" placeholder="Descrição da Intervenção" required>
+        <label>Revisão: <input type="checkbox" id="revisao"></label>
+        <input type="text" id="estado_ordem" placeholder="Estado (Ex.: Aberta, Concluída)" required>
+        <input type="date" id="data_fecho" placeholder="Data de Fecho">
+        <textarea id="observacoes_ordem" placeholder="Observações"></textarea>
+        <input type="text" id="prioridade" placeholder="Prioridade (Baixa, Média, Alta)" required>
+        <button type="submit">Criar Ordem</button>
+      </form>
+      <button id="listarOrdens">Listar Ordens</button>
+      <div id="listaOrdens" class="result-list"></div>
+    </div>
+
+    <!-- Seção de Itens de OR -->
+    <div id="itens" class="section">
+      <h1>Itens de Ordem de Reparação</h1>
+      <h2>Adicionar Item à Ordem</h2>
+      <form id="itemForm">
+        <input type="number" id="id_or_item" placeholder="ID da OR" required>
+        <input type="text" id="tipo_item" placeholder="Tipo (artigo/servico)" required>
+        <input type="number" id="id_artigo" placeholder="ID do Artigo (opcional)">
+        <input type="number" id="id_servico" placeholder="ID do Serviço (opcional)">
+        <input type="text" id="descricao_item" placeholder="Descrição">
+        <input type="text" id="marca_item" placeholder="Marca">
+        <input type="number" id="quantidade_item" placeholder="Quantidade">
+        <input type="number" id="preco_unitario_item" placeholder="Preço Unitário">
+        <input type="number" id="desconto_item" placeholder="Desconto">
+        <input type="number" id="total_liquido_item" placeholder="Total Líquido">
+        <input type="number" id="iva_item" placeholder="IVA">
+        <input type="number" id="total_com_iva_item" placeholder="Total c/ IVA">
+        <textarea id="observacoes_item" placeholder="Observações"></textarea>
+        <button type="submit">Adicionar Item</button>
+      </form>
+      <button id="listarItens">Listar Itens da OR</button>
+      <div id="listaItens" class="result-list"></div>
+    </div>
+
+    <!-- Seção de Marcações -->
+    <div id="marcacoes" class="section">
+      <h1>Marcações</h1>
+      <h2>Criar Marcação</h2>
+      <form id="marcacaoForm">
+        <input type="number" id="id_cliente_marcacao" placeholder="ID do Cliente" required>
+        <input type="number" id="id_veiculo_marcacao" placeholder="ID do Veículo" required>
+        <input type="date" id="data_marcacao" required>
+        <input type="time" id="hora_marcacao" required>
+        <input type="text" id="descricao_marcacao" placeholder="Descrição" required>
+        <input type="text" id="estado_marcacao" placeholder="Estado (Ex.: Planeada)" required>
+        <label>Stock Reservado: <input type="checkbox" id="stock_reservado"></label>
+        <label>Convertida em OR: <input type="checkbox" id="convertida_em_or"></label>
+        <input type="number" id="id_or_gerada" placeholder="ID da OR (se convertida)">
+        <textarea id="observacoes_marcacao" placeholder="Observações"></textarea>
+        <input type="number" id="criado_por_marcacao" placeholder="ID do Funcionário" required>
+        <button type="submit">Criar Marcação</button>
+      </form>
+      <button id="listarMarcacoes">Listar Marcações</button>
+      <div id="listaMarcacoes" class="result-list"></div>
+    </div>
+
+    <!-- Seção de Contas Correntes -->
+    <div id="contas" class="section">
+      <h1>Contas Correntes</h1>
+      <h2>Criar Lançamento</h2>
+      <form id="contaForm">
+        <input type="text" id="tipo_entidade" placeholder="Tipo (cliente/fornecedor)" required>
+        <input type="number" id="id_entidade" placeholder="ID da Entidade" required>
+        <input type="date" id="data_lancamento" required>
+        <input type="text" id="descricao_conta" placeholder="Descrição" required>
+        <input type="text" id="documento" placeholder="Documento">
+        <input type="number" id="valor" placeholder="Valor" required step="0.01">
+        <input type="text" id="forma_pagamento" placeholder="Forma de Pagamento">
+        <input type="text" id="estado_conta" placeholder="Estado (Aberto/Pago)" required>
+        <input type="date" id="data_pagamento">
+        <textarea id="observacoes_conta" placeholder="Observações"></textarea>
+        <button type="submit">Criar Lançamento</button>
+      </form>
+      <button id="listarContas">Listar Lançamentos</button>
+      <div id="listaContas" class="result-list"></div>
+    </div>
+
+    <!-- Seção de Compras -->
+    <div id="compras" class="section">
+      <h1>Compras</h1>
+      <h2>Criar Compra</h2>
+      <form id="compraForm">
+        <input type="number" id="id_fornecedor_compra" placeholder="ID do Fornecedor" required>
+        <input type="date" id="data_compra" required>
+        <input type="text" id="documento_compra" placeholder="Documento">
+        <input type="number" id="valor_total" placeholder="Valor Total" required step="0.01">
+        <button type="submit">Criar Compra</button>
+      </form>
+      <button id="listarCompras">Listar Compras</button>
+      <div id="listaCompras" class="result-list"></div>
+    </div>
+
+    <!-- Seção de Compras de Artigos -->
+    <div id="comprasArtigos" class="section">
+      <h1>Compras de Artigos</h1>
+      <h2>Registrar Artigo na Compra</h2>
+      <form id="comprasArtigosForm">
+        <input type="number" id="id_compra_artigo_compra" placeholder="ID da Compra" required>
+        <input type="number" id="id_artigo_compra" placeholder="ID do Artigo" required>
+        <input type="number" id="quantidade_compra" placeholder="Quantidade" required step="0.01">
+        <input type="number" id="preco_unitario_compra" placeholder="Preço Unitário" required step="0.01">
+        <button type="submit">Registrar Artigo na Compra</button>
+      </form>
+      <button id="listarComprasArtigos">Listar Artigos por Compra</button>
+      <div id="listaComprasArtigos" class="result-list"></div>
+    </div>
+
+    <!-- Seção de Anexos de OR -->
+    <div id="anexos" class="section">
+      <h1>Anexos de OR</h1>
+      <h2>Adicionar Anexo</h2>
+      <form id="anexoForm">
+        <input type="number" id="id_or_anexo" placeholder="ID da OR" required>
+        <input type="text" id="caminho_arquivo" placeholder="Caminho do Arquivo" required>
+        <input type="text" id="tipo_arquivo" placeholder="Tipo do Arquivo (ex.: jpg, pdf)" required>
+        <button type="submit">Adicionar Anexo</button>
+      </form>
+      <button id="listarAnexos">Listar Anexos da OR</button>
+      <div id="listaAnexos" class="result-list"></div>
+    </div>
+
+    <!-- Seção de Log de Ações -->
+    <div id="logs" class="section">
+      <h1>Log de Ações</h1>
+      <h2>Registrar Ação</h2>
+      <form id="logForm">
+        <input type="number" id="id_funcionario_log" placeholder="ID do Funcionário" required>
+        <input type="text" id="acao" placeholder="Ação Realizada" required>
+        <input type="text" id="entidade_afetada" placeholder="Entidade Afetada" required>
+        <button type="submit">Registrar Ação</button>
+      </form>
+      <button id="listarLogs">Listar Logs</button>
+      <div id="listaLogs" class="result-list"></div>
+    </div>
+
+  </div> <!-- Fim do conteúdo -->
+
+  <script>
+    // Função para alternar seções
+    function showSection(sectionId) {
+      const sections = document.querySelectorAll('.section');
+      sections.forEach(sec => sec.classList.remove('active'));
+      document.getElementById(sectionId).classList.add('active');
+    }
+
+    // Função para cadastrar cliente (para testar, use a mesma lógica do clientes.html)
+    // Aqui você pode reutilizar ou integrar as funções de cadastro já implementadas anteriormente.
+    // Exemplo para cadastro de clientes:
+    document.getElementById('clienteForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const cliente = {
+        nif: document.getElementById('nif').value,
+        nome_abreviado: document.getElementById('nomeAbreviado').value,
+        nome: document.getElementById('nome').value,
+        morada: document.getElementById('morada').value,
+        codigo_postal: document.getElementById('codigoPostal').value,
+        localidade: document.getElementById('localidade').value,
+        contactos: document.getElementById('contactos').value,
+        email: document.getElementById('email').value,
+        observacoes: document.getElementById('observacoes').value
+      };
+
+      try {
+        const response = await fetch('http://localhost:3000/clientes', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(cliente)
+        });
+        if(!response.ok) throw new Error('Erro ao cadastrar cliente');
+        const data = await response.json();
+        alert("Cliente cadastrado com sucesso:\n" + JSON.stringify(data, null, 2));
+        document.getElementById('clienteForm').reset();
+      } catch (error) {
+        alert("Erro: " + error.message);
+      }
+    });
+
+    // Função para listar clientes
+    document.getElementById('listarClientes').addEventListener('click', async () => {
+      try {
+        const response = await fetch('http://localhost:3000/clientes');
+        if(!response.ok) throw new Error('Erro ao listar clientes');
+        const clientes = await response.json();
+        let html = '<ul>';
+        clientes.forEach(cliente => {
+          html += `<li>ID: ${cliente.id_cliente} | Nome: ${cliente.nome} | NIF: ${cliente.nif}</li>`;
+        });
+        html += '</ul>';
+        document.getElementById('listaClientes').innerHTML = html;
+      } catch (error) {
+        document.getElementById('listaClientes').innerHTML = "Erro: " + error.message;
+      }
+    });
+
+    // Outras funções de cada módulo podem ser implementadas de forma semelhante.
+    // Por exemplo, você pode criar funções para os formulários dos módulos de Veículos, Ordens, Marcações, etc.
+    // Para manter o exemplo mais enxuto, esse código deixa aberto para que você amplie conforme sua necessidade.
+
+  </script>
+</body>
+</html>

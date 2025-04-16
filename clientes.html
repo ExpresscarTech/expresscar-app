@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <title>Gestão de Clientes - ExpressCar</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    form {
+      margin-bottom: 20px;
+      padding: 10px;
+      border: 1px solid #ccc;
+    }
+    form input, form textarea, form button {
+      display: block;
+      margin: 5px 0;
+      padding: 8px;
+      width: 300px;
+    }
+    form textarea {
+      height: 60px;
+    }
+    .result-list ul {
+      list-style: none;
+      padding: 0;
+    }
+    .result-list li {
+      margin: 5px 0;
+      padding: 5px;
+      border-bottom: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+  <h1>Gestão de Clientes</h1>
+
+  <!-- Formulário para cadastrar cliente -->
+  <h2>Cadastrar Cliente</h2>
+  <form id="cadastroForm">
+    <input type="text" id="nif" placeholder="NIF" required>
+    <input type="text" id="nomeAbreviado" placeholder="Nome Abreviado" required>
+    <input type="text" id="nome" placeholder="Nome Completo" required>
+    <input type="text" id="morada" placeholder="Morada" required>
+    <input type="text" id="codigoPostal" placeholder="Código Postal" required>
+    <input type="text" id="localidade" placeholder="Localidade" required>
+    <input type="text" id="contactos" placeholder='Contactos (Ex.: [{"tipo": "pessoal", "numero": "912345678"}])' required>
+    <input type="email" id="email" placeholder="Email" required>
+    <textarea id="observacoes" placeholder="Observações"></textarea>
+    <button type="submit">Cadastrar Cliente</button>
+  </form>
+
+  <!-- Formulário para atualizar cliente -->
+  <h2>Atualizar Cliente</h2>
+  <form id="atualizarForm">
+    <input type="number" id="atualizarId" placeholder="ID do Cliente" required>
+    <input type="text" id="atualizarNif" placeholder="NIF" required>
+    <input type="text" id="atualizarNomeAbreviado" placeholder="Nome Abreviado" required>
+    <input type="text" id="atualizarNome" placeholder="Nome Completo" required>
+    <input type="text" id="atualizarMorada" placeholder="Morada" required>
+    <input type="text" id="atualizarCodigoPostal" placeholder="Código Postal" required>
+    <input type="text" id="atualizarLocalidade" placeholder="Localidade" required>
+    <input type="text" id="atualizarContactos" placeholder='Contactos (Ex.: [{"tipo": "pessoal", "numero": "912345678"}])' required>
+    <input type="email" id="atualizarEmail" placeholder="Email" required>
+    <textarea id="atualizarObservacoes" placeholder="Observações"></textarea>
+    <button type="submit">Atualizar Cliente</button>
+  </form>
+
+  <!-- Botão para excluir cliente -->
+  <h2>Excluir Cliente</h2>
+  <input type="number" id="excluirId" placeholder="ID do Cliente">
+  <button id="excluirCliente">Excluir Cliente</button>
+
+  <!-- Botão para listar clientes -->
+  <h2>Listar Clientes</h2>
+  <button id="listarClientes">Listar Clientes</button>
+  <div id="lista" class="result-list"></div>
+
+  <script>
+    const apiUrl = 'http://localhost:3000/clientes';
+
+    // Cadastrar cliente (POST)
+    document.getElementById('cadastroForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const cliente = {
+        nif: document.getElementById('nif').value,
+        nome_abreviado: document.getElementById('nomeAbreviado').value,
+        nome: document.getElementById('nome').value,
+        morada: document.getElementById('morada').value,
+        codigo_postal: document.getElementById('codigoPostal').value,
+        localidade: document.getElementById('localidade').value,
+        contactos: document.getElementById('contactos').value,
+        email: document.getElementById('email').value,
+        observacoes: document.getElementById('observacoes').value
+      };
+
+      try {
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(cliente)
+        });
+        if (!response.ok) throw new Error('Erro ao cadastrar cliente');
+        const data = await response.json();
+        alert("Cliente cadastrado com sucesso:\n" + JSON.stringify(data, null, 2));
+        document.getElementById('cadastroForm').reset();
+      } catch (error) {
+        alert("Erro: " + error.message);
+      }
+    });
+
+    // Atualizar cliente (PUT)
+    document.getElementById('atualizarForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = document.getElementById('atualizarId').value;
+      const cliente = {
+        nif: document.getElementById('atualizarNif').value,
+        nome_abreviado: document.getElementById('atualizarNomeAbreviado').value,
+        nome: document.getElementById('atualizarNome').value,
+        morada: document.getElementById('atualizarMorada').value,
+        codigo_postal: document.getElementById('atualizarCodigoPostal').value,
+        localidade: document.getElementById('atualizarLocalidade').value,
+        contactos: document.getElementById('atualizarContactos').value,
+        email: document.getElementById('atualizarEmail').value,
+        observacoes: document.getElementById('atualizarObservacoes').value
+      };
+
+      try {
+        const response = await fetch(`${apiUrl}/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(cliente)
+        });
+        if (!response.ok) throw new Error('Erro ao atualizar cliente');
+        const data = await response.json();
+        alert("Cliente atualizado com sucesso:\n" + JSON.stringify(data, null, 2));
+        document.getElementById('atualizarForm').reset();
+      } catch (error) {
+        alert("Erro: " + error.message);
+      }
+    });
+
+    // Excluir cliente (DELETE)
+    document.getElementById('excluirCliente').addEventListener('click', async () => {
+      const id = document.getElementById('excluirId').value;
+      if (!id) {
+        alert("Informe o ID do cliente a ser excluído");
+        return;
+      }
+      try {
+        const response = await fetch(`${apiUrl}/${id}`, { method: 'DELETE' });
+        if (!response.ok) throw new Error('Erro ao excluir cliente');
+        const data = await response.json();
+        alert("Cliente excluído:\n" + JSON.stringify(data, null, 2));
+      } catch (error) {
+        alert("Erro: " + error.message);
+      }
+    });
+
+    // Listar clientes (GET)
+    document.getElementById('listarClientes').addEventListener('click', async () => {
+      try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) throw new Error('Erro ao listar clientes');
+        const clientes = await response.json();
+        let html = '<ul>';
+        clientes.forEach(cliente => {
+          html += `<li>ID: ${cliente.id_cliente} | Nome: ${cliente.nome} | NIF: ${cliente.nif}</li>`;
+        });
+        html += '</ul>';
+        document.getElementById('lista').innerHTML = html;
+      } catch (error) {
+        document.getElementById('lista').innerHTML = "Erro: " + error.message;
+      }
+    });
+  </script>
+</body>
+</html>
