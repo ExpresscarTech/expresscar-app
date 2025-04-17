@@ -5,17 +5,17 @@ const cors = require('cors');
 const pool = require('./db');
 
 // Importação das rotas
-const clientesRouter = require('./routes/clientes');
-const veiculosRouter = require('./routes/veiculos');
-const ordensReparacaoRouter = require('./routes/ordens_reparacao');
-const orItensRouter = require('./routes/or_itens');
-const marcacoesRouter = require('./routes/marcacoes');
-const fornecedoresRouter = require('./routes/fornecedores');
-const contasCorrentesRouter = require('./routes/contas_correntes');
-const comprasRouter = require('./routes/compras');
-const comprasArtigosRouter = require('./routes/compras_artigos');
-const anexosOrRouter = require('./routes/anexos_or');
-const logAcoesRouter = require('./routes/log_acoes');
+const clientesRouter = require('./Routes/clientes');
+const veiculosRouter = require('./Routes/veiculos');
+const ordensReparacaoRouter = require('./Routes/ordens_reparacao');
+const orItensRouter = require('./Routes/or_itens');
+const marcacoesRouter = require('./Routes/marcacoes');
+const fornecedoresRouter = require('./Routes/fornecedores');
+const contasCorrentesRouter = require('./Routes/contas_correntes');
+const comprasRouter = require('./Routes/compras');
+const comprasArtigosRouter = require('./Routes/compras_artigos');
+const anexosOrRouter = require('./Routes/anexos_or');
+const logAcoesRouter = require('./Routes/log_acoes');
 
 const app = express();
 const port = process.env.PORT || 3000;
