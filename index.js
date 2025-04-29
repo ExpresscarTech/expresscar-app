@@ -1,46 +1,50 @@
-// index.js
-
+// index.js – ExpressCar API
+//--------------------------------------------------
 const express = require('express');
-const cors = require('cors');
-const pool = require('./db');
+const cors    = require('cors');
+const pool    = require('./db');        // mantém a pool central
 
-// Importação das rotas
-const clientesRouter = require('./Routes/clientes');
-const veiculosRouter = require('./Routes/veiculos');
-const ordensReparacaoRouter = require('./Routes/ordens_reparacao');
-const orItensRouter = require('./Routes/or_itens');
-const marcacoesRouter = require('./Routes/marcacoes');
-const fornecedoresRouter = require('./Routes/fornecedores');
-const contasCorrentesRouter = require('./Routes/contas_correntes');
-const comprasRouter = require('./Routes/compras');
-const comprasArtigosRouter = require('./Routes/compras_artigos');
-const anexosOrRouter = require('./Routes/anexos_or');
-const logAcoesRouter = require('./Routes/log_acoes');
+//--------------------------------------------------
+// Rotas
+//--------------------------------------------------
+const clientesRouter        = require('./routes/clientes');
+const veiculosRouter        = require('./routes/veiculos');
+const ordensRouter          = require('./routes/ordens_reparacao');
+const orItensRouter         = require('./routes/or_itens');
+const marcacoesRouter       = require('./routes/marcacoes');
+const fornecedoresRouter    = require('./routes/fornecedores');
+const contasRouter          = require('./routes/contas_correntes');
+const comprasRouter         = require('./routes/compras');
+const comprasArtigosRouter  = require('./routes/compras_artigos');
+const anexosRouter          = require('./routes/anexos_or');
+const logAcoesRouter        = require('./routes/log_acoes');
 
-const app = express();
+const app  = express();
 const port = process.env.PORT || 3000;
 
+//--------------------------------------------------
+// Middlewares
+//--------------------------------------------------
 app.use(cors());
 app.use(express.json());
 
-// Rota de teste
-app.get('/', (req, res) => {
-  res.send('ExpressCar API está funcionando!');
-});
+// Health check
+app.get('/', (_req, res) => res.send('ExpressCar API operacional!'));
 
-// Uso das rotas
-app.use('/clientes', clientesRouter);
-app.use('/veiculos', veiculosRouter);
-app.use('/ordens', ordensRouter);
-app.use('/or_itens', orItensRouter);
-app.use('/marcacoes', marcacoesRouter);
-app.use('/fornecedores', fornecedoresRouter);
-app.use('/contas_correntes', contasCorrentesRouter);
-app.use('/compras', comprasRouter);
-app.use('/compras_artigos', comprasArtigosRouter);
-app.use('/anexos_or', anexosOrRouter);
-app.use('/log_acoes', logAcoesRouter);
+//--------------------------------------------------
+// Mount routes
+//--------------------------------------------------
+app.use('/clientes',         clientesRouter);
+app.use('/veiculos',         veiculosRouter);
+app.use('/ordens',           ordensRouter);
+app.use('/or_itens',         orItensRouter);      // ← ajuste aqui
+app.use('/marcacoes',        marcacoesRouter);
+app.use('/fornecedores',     fornecedoresRouter);
+app.use('/contas_correntes', contasRouter);
+app.use('/compras',          comprasRouter);
+app.use('/compras_artigos',  comprasArtigosRouter);
+app.use('/anexos_or',        anexosRouter);
+app.use('/log_acoes',        logAcoesRouter);
 
-app.listen(port, () => {
-  console.log(`Servidor rodando na porta ${port}`);
-});
+//--------------------------------------------------
+app.listen(port, () => console.log(`Servidor rodando na porta ${port}`));
