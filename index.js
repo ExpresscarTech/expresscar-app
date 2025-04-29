@@ -31,7 +31,7 @@ app.get('/', (req, res) => {
 // Uso das rotas
 app.use('/clientes', clientesRouter);
 app.use('/veiculos', veiculosRouter);
-app.use('/ordens_reparacao', ordensReparacaoRouter);
+app.use('/ordens', ordensRouter);
 app.use('/or_itens', orItensRouter);
 app.use('/marcacoes', marcacoesRouter);
 app.use('/fornecedores', fornecedoresRouter);
